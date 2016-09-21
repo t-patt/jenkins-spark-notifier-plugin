@@ -260,16 +260,16 @@ public class SparkNotifyPostBuilder extends Recorder {
 
 	// Overridden for better type safety.
 	@Override
-	public SparkNotifyBuilderDescriptor getDescriptor() {
-		return (SparkNotifyBuilderDescriptor) super.getDescriptor();
+	public SparkNotifyPostBuilderDescriptor getDescriptor() {
+		return (SparkNotifyPostBuilderDescriptor) super.getDescriptor();
 	}
 
 	@Extension
-	public static final class SparkNotifyBuilderDescriptor extends BuildStepDescriptor<Publisher> {
+	public static final class SparkNotifyPostBuilderDescriptor extends BuildStepDescriptor<Publisher> {
 		/**
 		 * Constructor
 		 */
-		public SparkNotifyBuilderDescriptor() {
+		public SparkNotifyPostBuilderDescriptor() {
 			super(SparkNotifyPostBuilder.class);
 			load();
 		}
