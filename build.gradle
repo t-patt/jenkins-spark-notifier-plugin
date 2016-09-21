@@ -1,0 +1,48 @@
+buildscript {
+	repositories {
+		maven {	url "https://repo.jenkins-ci.org/public/" }
+	}
+	dependencies {
+		classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.16.0'
+	}
+}
+apply plugin: 'org.jenkins-ci.jpi'
+apply plugin: 'eclipse'
+
+jenkinsPlugin {
+	coreVersion = '1.551'
+	displayName = 'Spark Notifier'
+	url = 'TBD'
+	developers {
+		developer {
+			id 'taypatto'
+			name 'Taylor Patton'
+			email 'taylorp36@gmail.com'
+		}
+	}
+}
+
+
+repositories {
+	maven {	url "https://repo.jenkins-ci.org/public/" }
+}
+
+group = "org.jenkins-ci.tools"
+version = "1.0.0"
+description = "Plugin to notify Cisco Spark Rooms from jobs using bot accounts"
+
+dependencies {
+	compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.7.4'
+	compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+	jenkinsPlugins 'org.jenkins-ci.plugins:credentials:1.22@jar'
+	jenkinsPlugins 'org.jenkins-ci.plugins:plain-credentials:1.2@jar'
+	runtime 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
+	runtime 'org.glassfish.jersey.core:jersey-client:2.22.2'
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.12'
+}
