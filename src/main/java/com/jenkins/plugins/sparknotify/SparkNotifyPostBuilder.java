@@ -1,4 +1,4 @@
-package com.jenkins.plugins.sparknotification;
+package com.jenkins.plugins.sparknotify;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -13,7 +13,8 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Builder;
+import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
@@ -44,10 +45,18 @@ import static com.cloudbees.plugins.credentials.CredentialsMatchers.withId;
 import static com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials; 
 import static com.cloudbees.plugins.credentials.CredentialsMatchers.firstOrNull;
 
-public class SparkNotifyBuilder extends Builder {
+public class SparkNotifyPostBuilder extends Recorder {
+	private static final String JOB_FAILURE = "FAILURE";
+	private static final String JOB_SUCCESS = "SUCCESS";
+	private static final String JOB_ABORTED = "ABORTED";
+	private static final String JOB_UNSTABLE = "UNSTABLE";
 
 	private List<SparkRoom> roomList;
 	private boolean disable;
+	private boolean skipOnFailure;
+	private boolean skipOnSuccess;
+	private boolean skipOnAborted;
+	private boolean skipOnUnstable;
 	private String message;
 	private String messageType;
 	private String publishContent;
@@ -83,8 +92,12 @@ public class SparkNotifyBuilder extends Builder {
 	 * Constructor
 	 */
 	@DataBoundConstructor
-	public SparkNotifyBuilder(boolean disable, String publishContent, String messageType, List<SparkRoom> roomList, String credentialsId) {
+	public SparkNotifyPostBuilder(boolean disable, boolean skipOnFailure, boolean skipOnSuccess, boolean skipOnAborted, boolean skipOnUnstable, String publishContent, String messageType, List<SparkRoom> roomList, String credentialsId) {
 		this.disable = disable;
+		this.skipOnFailure = skipOnFailure;
+		this.skipOnSuccess = skipOnSuccess;
+		this.skipOnAborted = skipOnAborted;
+		this.skipOnUnstable = skipOnUnstable;
 		this.publishContent = publishContent;
 		this.messageType = messageType;
 		this.roomList = roomList;
@@ -106,6 +119,22 @@ public class SparkNotifyBuilder extends Builder {
 
 	public boolean isDisable() {
 		return disable;
+	}
+
+	public boolean isSkipOnFailure() {
+		return skipOnFailure;
+	}
+
+	public boolean isSkipOnSuccess() {
+		return skipOnSuccess;
+	}
+
+	public boolean isSkipOnAborted() {
+		return skipOnAborted;
+	}
+
+	public boolean isSkipOnUnstable() {
+		return skipOnUnstable;
 	}
 
 	public List<SparkRoom> getRoomList() {
@@ -136,19 +165,45 @@ public class SparkNotifyBuilder extends Builder {
 			listener.getLogger().println("Spark Notify Plugin Disabled!");
 			return true;
 		}
-
+		
 		EnvVars envVars = build.getEnvironment(listener);
 
 		message = getPublishContent();
-		if (message == null || message.isEmpty()) {
+		if (message == null || message.isEmpty() ) {
 			listener.getLogger().println("Skipping Spark notifications because no message was defined");
+			return true;
+		}
+
+		// Little hack to replace the build result with env variable
+		String result = build.getResult().toString();
+		if (result != null && !result.toString().isEmpty()) {
+			message = message.replace("${BUILD_RESULT}", result);
+		} else {
+			listener.getLogger().println("Could not get result");
+			result = "";
+		}
+		
+		if (skipOnSuccess && result.equals(JOB_SUCCESS)) {
+			listener.getLogger().println("Skipping Spark notifications because job was successful");
+			return true;
+		}
+		if (skipOnFailure && result.equals(JOB_FAILURE)) {
+			listener.getLogger().println("Skipping Spark notifications because job failed");
+			return true;
+		}
+		if (skipOnAborted && result.equals(JOB_ABORTED)) {
+			listener.getLogger().println("Skipping Spark notifications because job was aborted");
+			return true;
+		}
+		if (skipOnUnstable && result.equals(JOB_UNSTABLE)) {
+			listener.getLogger().println("Skipping Spark notifications because job is unstable");
 			return true;
 		}
 
 		if (messageType == null || messageType.isEmpty()) {
 			messageType = "text";
 		}
-		
+
 		if (roomList == null || roomList.isEmpty()) {
 			listener.getLogger().println("Skipping Spark notifications because no rooms were defined");
 			return true;
@@ -157,7 +212,7 @@ public class SparkNotifyBuilder extends Builder {
 		SparkMessageType sparkMessageType = SparkMessageType.valueOf(messageType.toUpperCase());
 		
 		SparkNotifier notifier = new SparkNotifier(getCredentials(credentialsId), envVars);
-
+		
 		boolean isProblemSendingMessage = false;
 
 		for (int k = 0; k < roomList.size(); k++) {
@@ -191,7 +246,16 @@ public class SparkNotifyBuilder extends Builder {
 
 	@Override
 	public BuildStepMonitor getRequiredMonitorService() {
-		return BuildStepMonitor.BUILD;
+		return BuildStepMonitor.NONE;
+	}
+
+	@Override
+	public boolean needsToRunAfterFinalized() {
+		// This is here to ensure that the reported build status is actually
+		// correct. If we were to return false here,
+		// other build plugins could still modify the build result, making the
+		// sent out Spark notification incorrect.
+		return true;
 	}
 
 	// Overridden for better type safety.
@@ -201,12 +265,12 @@ public class SparkNotifyBuilder extends Builder {
 	}
 
 	@Extension
-	public static final class SparkNotifyBuilderDescriptor extends BuildStepDescriptor<Builder> {
+	public static final class SparkNotifyBuilderDescriptor extends BuildStepDescriptor<Publisher> {
 		/**
 		 * Constructor
 		 */
 		public SparkNotifyBuilderDescriptor() {
-			super(SparkNotifyBuilder.class);
+			super(SparkNotifyPostBuilder.class);
 			load();
 		}
 
@@ -219,7 +283,7 @@ public class SparkNotifyBuilder extends Builder {
 			save();
 			return true;
 		}
-		
+
 		public FormValidation doMessageCheck(@QueryParameter String message) {
 			if (SparkMessage.isMessageValid(message)) {
 				return FormValidation.ok();
@@ -227,7 +291,7 @@ public class SparkNotifyBuilder extends Builder {
 				return FormValidation.error("Message cannot be null");
 			}
 		}
-			
+
 		public FormValidation doRoomIdCheck(@QueryParameter String roomId) {
 			if (SparkMessage.isRoomIdValid(roomId)) {
 				return FormValidation.ok();

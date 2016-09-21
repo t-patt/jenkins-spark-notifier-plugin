@@ -1,4 +1,4 @@
-package com.jenkins.plugins.sparknotification;
+package com.jenkins.plugins.sparknotify;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;

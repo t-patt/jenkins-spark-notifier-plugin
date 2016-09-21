@@ -1,4 +1,4 @@
-package com.jenkins.plugins.sparknotification;
+package com.jenkins.plugins.sparknotify;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -15,7 +15,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import hudson.EnvVars;
 
-import com.jenkins.plugins.sparknotification.SparkMessage.SparkMessageBuilder;
+import com.jenkins.plugins.sparknotify.SparkMessage.SparkMessageBuilder;
 import com.cloudbees.plugins.credentials.Credentials;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 
