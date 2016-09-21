@@ -169,7 +169,7 @@ public class SparkNotifyPostBuilder extends Recorder {
 		EnvVars envVars = build.getEnvironment(listener);
 
 		message = getPublishContent();
-		if (message == null || message.isEmpty() ) {
+		if (!SparkMessage.isMessageValid(message)) {
 			listener.getLogger().println("Skipping Spark notifications because no message was defined");
 			return true;
 		}
