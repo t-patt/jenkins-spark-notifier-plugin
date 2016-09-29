@@ -10,9 +10,9 @@ apply plugin: 'org.jenkins-ci.jpi'
 apply plugin: 'eclipse'
 
 jenkinsPlugin {
-	coreVersion = '1.551'
-	displayName = 'Spark Notifier'
-	shortName = "spark-notifier"
+	coreVersion = '1.554.3'
+	displayName = 'Cisco Spark Notifier'
+	shortName = "cisco-spark-notifier"
 	url = 'https://wiki.jenkins-ci.org/display/JENKINS/Spark+Notifier+Plugin'
 	developers {
 		developer {
