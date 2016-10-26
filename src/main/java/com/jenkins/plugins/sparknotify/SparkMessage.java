@@ -12,37 +12,48 @@ public class SparkMessage {
 	private String text;
 	private String markdown;
 	private String html;
-	
-	public String getRoomId() { return roomId; }
-	public String getText() { return text; }
-	public String getHtml() { return html; }
-	public String getMarkdown() { return markdown; }
-	
-	private void setRoomId(String roomId) {
+
+	public String getRoomId() {
+		return roomId;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public String getHtml() {
+		return html;
+	}
+
+	public String getMarkdown() {
+		return markdown;
+	}
+
+	private void setRoomId(final String roomId) {
 		this.roomId = roomId;
 	}
-	
-	private void setMessage(String message, SparkMessageType messageType) throws SparkNotifyException {
+
+	private void setMessage(final String message, final SparkMessageType messageType) throws SparkNotifyException {
 		switch (messageType) {
 		case TEXT:
-			this.text = message;
+			text = message;
 			break;
-		case MARKUP:
-			this.markdown = message;
+		case MARKDOWN:
+			markdown = message;
 			break;
 		case HTML:
-			this.html = message;
+			html = message;
 			break;
 		default:
 			throw new SparkNotifyException("Could not find message type. This shouldn't happen.");
 		}
 	}
-	
-	public static boolean isMessageValid(String message) {
+
+	public static boolean isMessageValid(final String message) {
 		return message != null && !message.isEmpty();
 	}
 
-	public static boolean isRoomIdValid(String roomId) {
+	public static boolean isRoomIdValid(final String roomId) {
 		try {
 			UUID.fromString(roomId);
 			return true;
@@ -61,7 +72,7 @@ public class SparkMessage {
 			}
 		}
 	}
-	
+
 	public static class SparkMessageBuilder {
 
 		private String roomId;
@@ -69,22 +80,22 @@ public class SparkMessage {
 		private SparkMessageType messageType;
 
 		public SparkMessageBuilder() {}
-		
+
 		public SparkMessageBuilder roomId(final String roomId) {
 			this.roomId = roomId;
 			return this;
 		}
-		
+
 		public SparkMessageBuilder message(final String message) {
 			this.message = message;
 			return this;
 		}
-		
+
 		public SparkMessageBuilder messageType(final SparkMessageType messageType) {
 			this.messageType = messageType;
 			return this;
 		}
-		
+
 		public SparkMessage build() throws SparkNotifyException {
 			SparkMessage sparkMessage = new SparkMessage();
 			sparkMessage.setRoomId(roomId);
