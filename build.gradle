@@ -14,6 +14,7 @@ jenkinsPlugin {
 	displayName = 'Cisco Spark Notifier'
 	shortName = "cisco-spark-notifier"
 	url = 'https://wiki.jenkins-ci.org/display/JENKINS/Spark+Notifier+Plugin'
+	gitHubUrl = 'https://github.com/jenkinsci/cisco-spark-notifier-plugin'
 	developers {
 		developer {
 			id 'taypatto'
