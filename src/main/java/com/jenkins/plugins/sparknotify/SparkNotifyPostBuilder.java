@@ -91,9 +91,6 @@ public class SparkNotifyPostBuilder extends Recorder {
 		}
 	}
 
-	/**
-	 * Constructor
-	 */
 	@DataBoundConstructor
 	public SparkNotifyPostBuilder(final boolean disable, final boolean skipOnFailure, final boolean skipOnSuccess, final boolean skipOnAborted, final boolean skipOnUnstable,
 			final String publishContent, final String messageType, final List<SparkRoom> roomList, final String credentialsId) {
@@ -178,7 +175,6 @@ public class SparkNotifyPostBuilder extends Recorder {
 			return true;
 		}
 
-		// Little hack to replace the build result with env variable
 		String result = build.getResult().toString();
 		if (result != null && !result.toString().isEmpty()) {
 			message = message.replace("${BUILD_RESULT}", result);
@@ -255,14 +251,9 @@ public class SparkNotifyPostBuilder extends Recorder {
 
 	@Override
 	public boolean needsToRunAfterFinalized() {
-		// This is here to ensure that the reported build status is actually
-		// correct. If we were to return false here,
-		// other build plugins could still modify the build result, making the
-		// sent out Spark notification incorrect.
 		return true;
 	}
 
-	// Overridden for better type safety.
 	@Override
 	public SparkNotifyPostBuilderDescriptor getDescriptor() {
 		return (SparkNotifyPostBuilderDescriptor) super.getDescriptor();
@@ -270,9 +261,6 @@ public class SparkNotifyPostBuilder extends Recorder {
 
 	@Extension
 	public static final class SparkNotifyPostBuilderDescriptor extends BuildStepDescriptor<Publisher> {
-		/**
-		 * Constructor
-		 */
 		public SparkNotifyPostBuilderDescriptor() {
 			super(SparkNotifyPostBuilder.class);
 			load();

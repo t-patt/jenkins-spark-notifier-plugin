@@ -82,9 +82,6 @@ public class SparkNotifyBuilder extends Builder {
 		}
 	}
 
-	/**
-	 * Constructor
-	 */
 	@DataBoundConstructor
 	public SparkNotifyBuilder(final boolean disable, final String publishContent, final String messageType, final List<SparkRoom> roomList, final String credentialsId) {
 		this.disable = disable;
@@ -197,7 +194,6 @@ public class SparkNotifyBuilder extends Builder {
 		return BuildStepMonitor.BUILD;
 	}
 
-	// Overridden for better type safety.
 	@Override
 	public SparkNotifyBuilderDescriptor getDescriptor() {
 		return (SparkNotifyBuilderDescriptor) super.getDescriptor();
@@ -205,9 +201,6 @@ public class SparkNotifyBuilder extends Builder {
 
 	@Extension
 	public static final class SparkNotifyBuilderDescriptor extends BuildStepDescriptor<Builder> {
-		/**
-		 * Constructor
-		 */
 		public SparkNotifyBuilderDescriptor() {
 			super(SparkNotifyBuilder.class);
 			load();

@@ -6,6 +6,7 @@ buildscript {
 		classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.16.0'
 	}
 }
+
 apply plugin: 'org.jenkins-ci.jpi'
 apply plugin: 'eclipse'
 
@@ -23,7 +24,6 @@ jenkinsPlugin {
 		}
 	}
 }
-
 
 repositories {
 	maven {	url "https://repo.jenkins-ci.org/public/" }
