@@ -1,0 +1,49 @@
+<div>
+	Define the message to send to spark room
+	<br>
+	<br>
+	To display the build result:
+	<ul>
+	<li>${BUILD_RESULT}</li>
+	</ul>
+	Environment variable examples:
+	<ul>
+	<li>${BUILD_URL}</li>
+	<li>${BUILD_NUMBER}</li>
+	<li>${BUILD_ID}</li>
+	<li>${BUILD_DISPLAY_NAME}</li>
+	<li>${BUILD_TAG}</li>
+	<li>${JOB_NAME}</li>
+	<li>${JOB_URL}</li>
+	<li>${EXECUTOR_NUMBER}</li>
+	<li>${HUDSON_URL}</li>
+	<li>${JAVA_HOME}</li>
+	<li>${JAVA_VERSION}</li>
+	<li>${JENKINS_URL}</li>
+	<li>${JENKINS_VERSION}</li>
+	<li>${NODE_LABELS}</li>
+	<li>${NODE_NAME}</li>
+	<li>${PATH}</li>
+	<li>${PWD}</li>
+	</ul>
+	if using SCM or SCM trigger (see the corresponding plugin wiki for additional environment variables):
+	<ul>
+	<li>${BRANCH_NAME}</li>
+	<li>${CHANGE_ID}</li>
+	<li>${CHANGE_URL}</li>
+	<li>${CHANGE_TITLE}</li>
+	<li>${CHANGE_AUTHOR}</li>
+	<li>${CHANGE_AUTHOR_DISPLAY_NAME}</li>
+	<li>${CHANGE_AUTHOR_EMAIL}</li>
+	<li>${CHANGE_TARGET}</li>
+	</ul>
+	if using the Environment Injector Plugin:
+	<ul>
+	<li>${BUILD_CAUSE}</li>
+	<li>${BUILD_CAUSE_MANUALTRIGGER}</li>
+	<li>${BUILD_CAUSE_SCMTRIGGER}</li>
+	<li>${BUILD_CAUSE_UPSTREAMTRIGGER}</li>
+	<li>${ROOT_BUILD_CAUSE}</li>
+	</ul>
+	All environment variables injected into the build can also be used
+</div>
