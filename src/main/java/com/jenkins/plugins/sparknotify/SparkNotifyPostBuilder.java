@@ -61,7 +61,7 @@ public class SparkNotifyPostBuilder extends Recorder {
 	private final boolean skipOnUnstable;
 	private String message;
 	private String messageType;
-	private String publishContent;
+	private String messageContent;
 	private String credentialsId;
 
 	public static final class SparkRoom extends AbstractDescribableImpl<SparkRoom> {
@@ -93,25 +93,25 @@ public class SparkNotifyPostBuilder extends Recorder {
 
 	@DataBoundConstructor
 	public SparkNotifyPostBuilder(final boolean disable, final boolean skipOnFailure, final boolean skipOnSuccess, final boolean skipOnAborted, final boolean skipOnUnstable,
-			final String publishContent, final String messageType, final List<SparkRoom> roomList, final String credentialsId) {
+			final String messageContent, final String messageType, final List<SparkRoom> roomList, final String credentialsId) {
 		this.disable = disable;
 		this.skipOnFailure = skipOnFailure;
 		this.skipOnSuccess = skipOnSuccess;
 		this.skipOnAborted = skipOnAborted;
 		this.skipOnUnstable = skipOnUnstable;
-		this.publishContent = publishContent;
+		this.messageContent = messageContent;
 		this.messageType = messageType;
 		this.roomList = roomList;
 		this.credentialsId = credentialsId;
 	}
 
-	public String getPublishContent() {
-		return publishContent;
+	public String getMessageContent() {
+		return messageContent;
 	}
 
 	@DataBoundSetter
-	public void setPublishContent(final String publishContent) {
-		this.publishContent = publishContent;
+	public void setMessageContent(final String messageContent) {
+		this.messageContent = messageContent;
 	}
 
 	public String getMessageType() {
@@ -169,7 +169,7 @@ public class SparkNotifyPostBuilder extends Recorder {
 
 		EnvVars envVars = build.getEnvironment(listener);
 
-		message = getPublishContent();
+		message = getMessageContent();
 		if (!SparkMessage.isMessageValid(message)) {
 			listener.getLogger().println("Skipping Spark notifications because no message was defined");
 			return true;
